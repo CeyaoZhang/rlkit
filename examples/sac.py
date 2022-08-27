@@ -107,10 +107,11 @@ import click
 def main(env_name, seed, use_gpu, gpu_id, uaet, srb): 
 
     set_seed(seed)
-    ptu.set_gpu_mode(mode=use_gpu,gpu_id=gpu_id)  # optionally set the GPU (default=False)
+    ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=False)
 
     # noinspection PyTypeChecker
     variant = dict(
+        env_name=env_name,
         algorithm="SAC",
         version="normal",
         layer_size=256,
@@ -134,7 +135,11 @@ def main(env_name, seed, use_gpu, gpu_id, uaet, srb):
             reward_scale=1,
             use_automatic_entropy_tuning=uaet,
         ),
-        env_name=env_name
+        util_params=dict(
+            use_gpu=use_gpu,
+            gpu_id=gpu_id,
+            seed=seed,
+        )
     )
 
     setup_logger(exp_prefix=env_name, variant=variant)
