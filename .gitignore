@@ -9,3 +9,5 @@ MANIFEST
 \.idea/
 
 data/
+*.log
+*.pkl

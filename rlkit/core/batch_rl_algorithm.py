@@ -24,6 +24,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             num_train_loops_per_epoch=1,
             min_num_steps_before_training=0,
             start_epoch=0, # negative epochs are offline, positive epochs are online
+            save_replay_buffer=False
     ):
         super().__init__(
             trainer,
@@ -32,6 +33,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             exploration_data_collector,
             evaluation_data_collector,
             replay_buffer,
+            save_replay_buffer,
         )
         self.batch_size = batch_size
         self.max_path_length = max_path_length

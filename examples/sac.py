@@ -103,7 +103,8 @@ import click
 @click.option('--use_gpu/--use_cpu', default=True)
 @click.option('--gpu_id', default=0)
 @click.option('--uaet/--nuaet', is_flag=True, default=False) # default not use_automatic_entropy_tuning
-def main(env_name, seed, use_gpu, gpu_id, uaet): 
+@click.option('--srb/--nsrb', is_flag=True, default=False) # save replay buffer
+def main(env_name, seed, use_gpu, gpu_id, uaet, srb): 
 
     set_seed(seed)
     ptu.set_gpu_mode(mode=use_gpu,gpu_id=gpu_id)  # optionally set the GPU (default=False)
@@ -113,7 +114,7 @@ def main(env_name, seed, use_gpu, gpu_id, uaet):
         algorithm="SAC",
         version="normal",
         layer_size=256,
-        replay_buffer_size=int(1E6), 
+        replay_buffer_size=int(3E6), # default is 1e6
         algorithm_kwargs=dict(
             num_epochs=3000,
             num_eval_steps_per_epoch=5000,
@@ -122,6 +123,7 @@ def main(env_name, seed, use_gpu, gpu_id, uaet):
             min_num_steps_before_training=1000,
             max_path_length=1000,
             batch_size=256,
+            save_replay_buffer=srb,
         ),
         trainer_kwargs=dict(
             discount=0.99,
