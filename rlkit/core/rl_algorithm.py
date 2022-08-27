@@ -87,10 +87,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         """
         Replay Buffer
         """
-        logger.record_dict(
-            self.replay_buffer.get_diagnostics(),
-            prefix='replay_buffer/'
-        )
+        logger.record_dict(self.replay_buffer.get_diagnostics(), prefix='replay_buffer/')
 
         """
         Trainer
@@ -100,37 +97,28 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         """
         Exploration
         """
-        logger.record_dict(
-            self.expl_data_collector.get_diagnostics(),
-            prefix='expl/'
-        )
-        expl_paths = self.expl_data_collector.get_epoch_paths()
+        logger.record_dict(self.expl_data_collector.get_diagnostics(), prefix='expl/')
+
+        expl_paths = self.expl_data_collector.get_epoch_paths() ## deque[dict{}]
         if hasattr(self.expl_env, 'get_diagnostics'):
             logger.record_dict(
                 self.expl_env.get_diagnostics(expl_paths),
                 prefix='expl/',
             )
-        logger.record_dict(
-            eval_util.get_generic_path_information(expl_paths),
-            prefix="expl/",
-        )
+        logger.record_dict(eval_util.get_generic_path_information(expl_paths), prefix="expl/",)
+        # expl_paths[0]'env_infos', 'agent_infos'
+
         """
         Evaluation
         """
-        logger.record_dict(
-            self.eval_data_collector.get_diagnostics(),
-            prefix='eval/',
-        )
+        logger.record_dict(self.eval_data_collector.get_diagnostics(), prefix='eval/',)
         eval_paths = self.eval_data_collector.get_epoch_paths()
         if hasattr(self.eval_env, 'get_diagnostics'):
             logger.record_dict(
                 self.eval_env.get_diagnostics(eval_paths),
                 prefix='eval/',
             )
-        logger.record_dict(
-            eval_util.get_generic_path_information(eval_paths),
-            prefix="eval/",
-        )
+        logger.record_dict(eval_util.get_generic_path_information(eval_paths), prefix="eval/",)
 
         """
         Misc

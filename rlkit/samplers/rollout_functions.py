@@ -79,7 +79,7 @@ def rollout(
         return_dict_obs=False,
         full_o_postprocess_func=None,
         reset_callback=None,
-):
+) -> dict:
     if render_kwargs is None:
         render_kwargs = {}
     if get_action_kwargs is None:

@@ -24,7 +24,7 @@ class MdpPathCollector(PathCollector):
         self._env = env
         self._policy = policy
         self._max_num_epoch_paths_saved = max_num_epoch_paths_saved
-        self._epoch_paths = deque(maxlen=self._max_num_epoch_paths_saved)
+        self._epoch_paths = deque(maxlen=self._max_num_epoch_paths_saved) # maxlen=None means without any limits
         self._render = render
         self._render_kwargs = render_kwargs
         self._rollout_fn = rollout_fn
@@ -39,7 +39,7 @@ class MdpPathCollector(PathCollector):
             max_path_length,
             num_steps,
             discard_incomplete_paths,
-    ):
+    ) -> list: 
         paths = []
         num_steps_collected = 0
         while num_steps_collected < num_steps:
@@ -66,9 +66,9 @@ class MdpPathCollector(PathCollector):
         self._num_paths_total += len(paths)
         self._num_steps_total += num_steps_collected
         self._epoch_paths.extend(paths)
-        return paths
+        return paths ## [path]
 
-    def get_epoch_paths(self):
+    def get_epoch_paths(self)->deque:
         return self._epoch_paths
 
     def end_epoch(self, epoch):

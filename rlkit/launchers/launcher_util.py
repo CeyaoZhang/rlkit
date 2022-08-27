@@ -13,7 +13,7 @@ import dateutil.tz
 import numpy as np
 
 from rlkit.core import logger
-from rlkit.launchers import conf
+from rlkit.launchers import conf ##
 from rlkit.torch.pytorch_util import set_gpu_mode
 import rlkit.pythonplusplus as ppp
 
@@ -185,8 +185,10 @@ def create_exp_name(exp_prefix, exp_id=0, seed=0):
     :return:
     """
     now = datetime.datetime.now(dateutil.tz.tzlocal())
-    timestamp = now.strftime('%Y_%m_%d_%H_%M_%S')
-    return "%s_%s_%04d--s-%d" % (exp_prefix, timestamp, exp_id, seed)
+    # timestamp = now.strftime('%Y_%m_%d_%H_%M_%S')
+    # return "%s_%s_%04d--s-%d" % (exp_prefix, timestamp, exp_id, seed)
+    timestamp = now.strftime('%Y%m%d%H%M%S')
+    return "%s_%s_seed%d" % (exp_prefix, timestamp, seed)
 
 
 def create_log_dir(
@@ -209,7 +211,7 @@ def create_log_dir(
     exp_name = create_exp_name(exp_prefix, exp_id=exp_id,
                                seed=seed)
     if base_log_dir is None:
-        base_log_dir = conf.LOCAL_LOG_DIR
+        base_log_dir = conf.LOCAL_LOG_DIR ## data/
     if include_exp_prefix_sub_dir:
         log_dir = osp.join(base_log_dir, exp_prefix.replace("_", "-"), exp_name)
     else:
@@ -355,6 +357,7 @@ def set_seed(seed):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed) ##
 
 
 def reset_execution_environment():

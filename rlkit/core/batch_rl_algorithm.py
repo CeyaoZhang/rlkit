@@ -45,48 +45,55 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
 
     def train(self):
         """Negative epochs are offline, positive epochs are online"""
+        ## self.num_epochs=3000
         for self.epoch in gt.timed_for(
                 range(self._start_epoch, self.num_epochs),
                 save_itrs=True,
         ):
-            self.offline_rl = self.epoch < 0
+            # print(f'-->this is epoch {self.epoch}')
+            self.offline_rl = self.epoch < 0 ## always False
             self._begin_epoch(self.epoch)
             self._train()
             self._end_epoch(self.epoch)
 
     def _train(self):
-        if self.epoch == 0 and self.min_num_steps_before_training > 0:
+
+        ## at each iteration, we first collect data, perform meta-updates, then try to evaluate
+
+        if self.epoch == 0 and self.min_num_steps_before_training > 0: ## min_num_steps_before_training=1000
+            print('collecting initial pool of data for train and eval')
             init_expl_paths = self.expl_data_collector.collect_new_paths(
-                self.max_path_length,
-                self.min_num_steps_before_training,
+                self.max_path_length, ## self.max_path_length=1000
+                self.min_num_steps_before_training, ## min_num_steps_before_training=1000
                 discard_incomplete_paths=False,
             )
-            if not self.offline_rl:
+            if not self.offline_rl: ## alway true
                 self.replay_buffer.add_paths(init_expl_paths)
             self.expl_data_collector.end_epoch(-1)
+            print('Done collecting initial pool of data for train and eval')
 
         self.eval_data_collector.collect_new_paths(
             self.max_path_length,
-            self.num_eval_steps_per_epoch,
+            self.num_eval_steps_per_epoch, ## num_eval_steps_per_epoch=5000
             discard_incomplete_paths=True,
         )
         gt.stamp('evaluation sampling')
 
-        for _ in range(self.num_train_loops_per_epoch):
+        for _ in range(self.num_train_loops_per_epoch): ## 1
             new_expl_paths = self.expl_data_collector.collect_new_paths(
                 self.max_path_length,
-                self.num_expl_steps_per_train_loop,
+                self.num_expl_steps_per_train_loop, ## num_expl_steps_per_train_loop=1000
                 discard_incomplete_paths=False,
             )
             gt.stamp('exploration sampling', unique=False)
 
-            if not self.offline_rl:
+            if not self.offline_rl: ## alway true
                 self.replay_buffer.add_paths(new_expl_paths)
             gt.stamp('data storing', unique=False)
 
             self.training_mode(True)
-            for _ in range(self.num_trains_per_train_loop):
-                train_data = self.replay_buffer.random_batch(self.batch_size)
-                self.trainer.train(train_data)
+            for _ in range(self.num_trains_per_train_loop): ## 1000
+                train_data = self.replay_buffer.random_batch(self.batch_size) ## 256, train_data = dict{np.array}
+                self.trainer.train(train_data) ## train the policy
             gt.stamp('training', unique=False)
             self.training_mode(False)

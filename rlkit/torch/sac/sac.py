@@ -92,7 +92,7 @@ class SACTrainer(TorchTrainer, LossFunction):
         self._need_to_update_eval_statistics = True
         self.eval_statistics = OrderedDict()
 
-    def train_from_torch(self, batch):
+    def train_from_torch(self, batch): ## key
         gt.blank_stamp()
         losses, stats = self.compute_loss(
             batch,
@@ -193,9 +193,7 @@ class SACTrainer(TorchTrainer, LossFunction):
         if not skip_statistics:
             eval_statistics['QF1 Loss'] = np.mean(ptu.get_numpy(qf1_loss))
             eval_statistics['QF2 Loss'] = np.mean(ptu.get_numpy(qf2_loss))
-            eval_statistics['Policy Loss'] = np.mean(ptu.get_numpy(
-                policy_loss
-            ))
+            eval_statistics['Policy Loss'] = np.mean(ptu.get_numpy(policy_loss))
             eval_statistics.update(create_stats_ordered_dict(
                 'Q1 Predictions',
                 ptu.get_numpy(q1_pred),
