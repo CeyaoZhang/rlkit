@@ -1,0 +1,7 @@
+{
+    "env_name": "ant-goal",
+    "replay_buffer_size": 9000000, 
+    "algorithm_kwargs": {
+        "num_epochs": 9000
+    }
+}

@@ -11,9 +11,20 @@ from rlkit.torch.networks import ConcatMlp
 from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
 from rlkit.envs.pearl_envs import ENVS
+from configs.default import default_config
 
+import os, json
 import numpy as np
 
+def deep_update_dict(fr, to):
+    ''' update dict of dicts with new values '''
+    # assume dicts have same keys
+    for k, v in fr.items():
+        if type(v) is dict:
+            deep_update_dict(v, to[k])
+        else:
+            to[k] = v
+    return to
 
 def experiment(variant):
 
@@ -98,82 +109,35 @@ def experiment(variant):
 
 import click
 @click.command()
-@click.argument('env_name', default='cheetah-dir')
+@click.argument('config', default=None)
 @click.option('--seed', type=int, default=100) 
 @click.option('--use_gpu/--use_cpu', default=True)
 @click.option('--gpu_id', default=0)
 @click.option('--uaet/--nuaet', is_flag=True, default=False) # default not use_automatic_entropy_tuning
 @click.option('--srb/--nsrb', is_flag=True, default=False) # save replay buffer
-def main(env_name, seed, use_gpu, gpu_id, uaet, srb): 
+def main(config, seed, use_gpu, gpu_id, srb, uaet): 
+
+    variant = default_config
+    if config:
+        with open(os.path.join(config)) as f:
+            exp_params = json.load(f)
+        variant = deep_update_dict(exp_params, variant)
+    
+    variant['util_params']['seed'] = seed
+    variant['util_params']['use_gpu'] = use_gpu
+    variant['util_params']['gpu_id'] = gpu_id
+    
+    variant['algo_params']['save_replay_buffer'] = srb 
+    variant['trainer_kwargs']['use_automatic_entropy_tuning'] = uaet
 
     set_seed(seed)
-    ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=False)
+    ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=True)
+    setup_logger(exp_prefix=variant['env_name'], variant=variant)
 
-    # noinspection PyTypeChecker
-    variant = dict(
-        env_name=env_name,
-        algorithm="SAC",
-        version="normal",
-        layer_size=256,
-        replay_buffer_size=int(3E6), # default is 1e6
-        algorithm_kwargs=dict(
-            num_epochs=3000,
-            num_eval_steps_per_epoch=5000,
-            num_trains_per_train_loop=1000,
-            num_expl_steps_per_train_loop=1000,
-            min_num_steps_before_training=1000,
-            max_path_length=1000,
-            batch_size=256,
-            save_replay_buffer=srb,
-        ),
-        trainer_kwargs=dict(
-            discount=0.99,
-            soft_target_tau=5e-3,
-            target_update_period=1,
-            policy_lr=3E-4,
-            qf_lr=3E-4,
-            reward_scale=1,
-            use_automatic_entropy_tuning=uaet,
-        ),
-        util_params=dict(
-            use_gpu=use_gpu,
-            gpu_id=gpu_id,
-            seed=seed,
-        )
-    )
-
-    setup_logger(exp_prefix=env_name, variant=variant)
     experiment(variant)
 
 
 
 if __name__ == "__main__":
     main()
-    # # noinspection PyTypeChecker
-    # variant = dict(
-    #     algorithm="SAC",
-    #     version="normal",
-    #     layer_size=256,
-    #     replay_buffer_size=int(1E6), 
-    #     algorithm_kwargs=dict(
-    #         num_epochs=3000,
-    #         num_eval_steps_per_epoch=5000,
-    #         num_trains_per_train_loop=1000,
-    #         num_expl_steps_per_train_loop=1000,
-    #         min_num_steps_before_training=1000,
-    #         max_path_length=1000,
-    #         batch_size=256,
-    #     ),
-    #     trainer_kwargs=dict(
-    #         discount=0.99,
-    #         soft_target_tau=5e-3,
-    #         target_update_period=1,
-    #         policy_lr=3E-4,
-    #         qf_lr=3E-4,
-    #         reward_scale=1,
-    #         use_automatic_entropy_tuning=True,
-    #     ),
-    # )
-    # setup_logger('name-of-experiment', variant=variant)
-    # ptu.set_gpu_mode(True)  # optionally set the GPU (default=False)
-    # experiment(variant)
+
