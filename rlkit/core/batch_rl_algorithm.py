@@ -61,30 +61,31 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
     def _train(self):
 
         ## at each iteration, we first collect data, perform meta-updates, then try to evaluate
-
         if self.epoch == 0 and self.min_num_steps_before_training > 0: ## min_num_steps_before_training=1000
-            print('collecting initial pool of data for train and eval')
+            print('\ncollecting initial pool of data for train and eval')
             init_expl_paths = self.expl_data_collector.collect_new_paths(
                 self.max_path_length, ## self.max_path_length=1000
-                self.min_num_steps_before_training, ## min_num_steps_before_training=1000
+                self.min_num_steps_before_training, ## min_num_steps_before_training=1000, paths=[path]
                 discard_incomplete_paths=False,
             )
             if not self.offline_rl: ## alway true
                 self.replay_buffer.add_paths(init_expl_paths)
             self.expl_data_collector.end_epoch(-1)
-            print('Done collecting initial pool of data for train and eval')
+            print('Done collecting initial pool of data for train and eval\n')
 
+        ##
         self.eval_data_collector.collect_new_paths(
             self.max_path_length,
-            self.num_eval_steps_per_epoch, ## num_eval_steps_per_epoch=5000
+            self.num_eval_steps_per_epoch, ## num_eval_steps_per_epoch=5000, paths=[5xpath]
             discard_incomplete_paths=True,
         )
         gt.stamp('evaluation sampling')
 
+        ## get the expl data, save to replay buffer, and train the SAC with batch from RB
         for _ in range(self.num_train_loops_per_epoch): ## 1
             new_expl_paths = self.expl_data_collector.collect_new_paths(
                 self.max_path_length,
-                self.num_expl_steps_per_train_loop, ## num_expl_steps_per_train_loop=1000
+                self.num_expl_steps_per_train_loop, ## num_expl_steps_per_train_loop=1000, paths=[path]
                 discard_incomplete_paths=False,
             )
             gt.stamp('exploration sampling', unique=False)

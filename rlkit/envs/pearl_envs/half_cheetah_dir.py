@@ -40,6 +40,7 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
 
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
+        
         done = False
         infos = dict(reward_forward=forward_reward,
             reward_ctrl=-ctrl_cost, task=self._task)

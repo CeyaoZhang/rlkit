@@ -194,24 +194,14 @@ class SACTrainer(TorchTrainer, LossFunction):
             eval_statistics['QF1 Loss'] = np.mean(ptu.get_numpy(qf1_loss))
             eval_statistics['QF2 Loss'] = np.mean(ptu.get_numpy(qf2_loss))
             eval_statistics['Policy Loss'] = np.mean(ptu.get_numpy(policy_loss))
-            eval_statistics.update(create_stats_ordered_dict(
-                'Q1 Predictions',
-                ptu.get_numpy(q1_pred),
-            ))
-            eval_statistics.update(create_stats_ordered_dict(
-                'Q2 Predictions',
-                ptu.get_numpy(q2_pred),
-            ))
-            eval_statistics.update(create_stats_ordered_dict(
-                'Q Targets',
-                ptu.get_numpy(q_target),
-            ))
-            eval_statistics.update(create_stats_ordered_dict(
-                'Log Pis',
-                ptu.get_numpy(log_pi),
-            ))
+            eval_statistics.update(create_stats_ordered_dict('Q1 Predictions',ptu.get_numpy(q1_pred),))
+            eval_statistics.update(create_stats_ordered_dict('Q2 Predictions',ptu.get_numpy(q2_pred),))
+            eval_statistics.update(create_stats_ordered_dict('Q Targets',ptu.get_numpy(q_target),))
+            eval_statistics.update(create_stats_ordered_dict('Log Pis',ptu.get_numpy(log_pi),))
+            
             policy_statistics = add_prefix(dist.get_diagnostics(), "policy/")
             eval_statistics.update(policy_statistics)
+            
             if self.use_automatic_entropy_tuning:
                 eval_statistics['Alpha'] = alpha.item()
                 eval_statistics['Alpha Loss'] = alpha_loss.item()

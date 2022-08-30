@@ -10,28 +10,26 @@ import numpy as np
 import rlkit.pythonplusplus as ppp
 
 
-def get_generic_path_information(paths, stat_prefix=''):
+def get_generic_path_information(paths, stat_prefix='')->OrderedDict:
     """
     Get an OrderedDict with a bunch of statistic names and values.
     """
     statistics = OrderedDict()
     if len(paths) == 0:
         return statistics
-    returns = [sum(path["rewards"]) for path in paths]
-
     rewards = np.vstack([path["rewards"] for path in paths])
-    statistics.update(create_stats_ordered_dict('Rewards', rewards,
-                                                stat_prefix=stat_prefix))
-    statistics.update(create_stats_ordered_dict('Returns', returns,
-                                                stat_prefix=stat_prefix))
+    statistics.update(create_stats_ordered_dict('Rewards', rewards, stat_prefix=stat_prefix))
+
+    returns = [sum(path["rewards"]) for path in paths]
+    statistics.update(create_stats_ordered_dict('Returns', returns, stat_prefix=stat_prefix))
+
     actions = [path["actions"] for path in paths]
     if len(actions[0].shape) == 1:
         actions = np.hstack([path["actions"] for path in paths])
     else:
         actions = np.vstack([path["actions"] for path in paths])
-    statistics.update(create_stats_ordered_dict(
-        'Actions', actions, stat_prefix=stat_prefix
-    ))
+    statistics.update(create_stats_ordered_dict('Actions', actions, stat_prefix=stat_prefix))
+
     statistics['Num Paths'] = len(paths)
     statistics[stat_prefix + 'Average Returns'] = get_average_returns(paths)
 

@@ -74,7 +74,7 @@ class MdpPathCollector(PathCollector):
     def end_epoch(self, epoch):
         self._epoch_paths = deque(maxlen=self._max_num_epoch_paths_saved)
 
-    def get_diagnostics(self):
+    def get_diagnostics(self)->OrderedDict:
         path_lens = [len(path['actions']) for path in self._epoch_paths]
         stats = OrderedDict([
             ('num steps total', self._num_steps_total),

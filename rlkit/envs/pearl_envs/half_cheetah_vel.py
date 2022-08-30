@@ -39,6 +39,7 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
 
         observation = self._get_obs()
         reward = forward_reward - ctrl_cost
+        
         done = False
         infos = dict(
             reward_forward=forward_reward,
