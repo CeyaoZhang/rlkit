@@ -54,18 +54,18 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         ):
             # print(f'-->this is epoch {self.epoch}')
             self.offline_rl = self.epoch < 0 ## always False
-            self._begin_epoch(self.epoch)
-            self._train()
-            self._end_epoch(self.epoch)
+            self._begin_epoch(self.epoch) ## pass
+            self._train() ## key to train
+            self._end_epoch(self.epoch) ## save params, replay buffers and record stats
 
     def _train(self):
 
         ## at each iteration, we first collect data, perform meta-updates, then try to evaluate
-        if self.epoch == 0 and self.min_num_steps_before_training > 0: ## min_num_steps_before_training=1000
+        if self.epoch == 0 and self.min_num_steps_before_training > 0: 
             print('\ncollecting initial pool of data for train and eval')
             init_expl_paths = self.expl_data_collector.collect_new_paths(
-                self.max_path_length, ## self.max_path_length=1000
-                self.min_num_steps_before_training, ## min_num_steps_before_training=1000, paths=[path]
+                self.max_path_length, ## self.max_path_length=200
+                self.min_num_steps_before_training, ## min_num_steps_before_training=2000, paths=[10xpath]
                 discard_incomplete_paths=False,
             )
             if not self.offline_rl: ## alway true
@@ -76,7 +76,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         ##
         self.eval_data_collector.collect_new_paths(
             self.max_path_length,
-            self.num_eval_steps_per_epoch, ## num_eval_steps_per_epoch=5000, paths=[5xpath]
+            self.num_eval_steps_per_epoch, ## num_eval_steps_per_epoch=600, paths=[3xpath]
             discard_incomplete_paths=True,
         )
         gt.stamp('evaluation sampling')
@@ -85,7 +85,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
         for _ in range(self.num_train_loops_per_epoch): ## 1
             new_expl_paths = self.expl_data_collector.collect_new_paths(
                 self.max_path_length,
-                self.num_expl_steps_per_train_loop, ## num_expl_steps_per_train_loop=1000, paths=[path]
+                self.num_expl_steps_per_train_loop, ## num_expl_steps_per_train_loop=1000, paths=[5xpath]
                 discard_incomplete_paths=False,
             )
             gt.stamp('exploration sampling', unique=False)
@@ -94,6 +94,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
                 self.replay_buffer.add_paths(new_expl_paths)
             gt.stamp('data storing', unique=False)
 
+            ## train the SAC
             self.training_mode(True)
             for _ in range(self.num_trains_per_train_loop): ## 1000
                 train_data = self.replay_buffer.random_batch(self.batch_size) ## 256, train_data = dict{np.array}

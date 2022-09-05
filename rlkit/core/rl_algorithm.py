@@ -65,7 +65,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
             if self.save_replay_buffer:
                 logger.save_extra_data(self.replay_buffer, file_name='replay_buffer.pkl', mode="pickle")
         gt.stamp('saving')
-        self._log_stats(epoch)
+        self._log_stats(epoch) ##
 
         self.expl_data_collector.end_epoch(epoch) ## set the expl_data_collector._epoch_paths=[], ensure only contain the last one paths
         self.eval_data_collector.end_epoch(epoch)
@@ -108,7 +108,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         Exploration
         """
         logger.record_dict(self.expl_data_collector.get_diagnostics(), prefix='expl/')
-        expl_paths = self.expl_data_collector.get_epoch_paths() ## len(expl_paths)=1 in every epoch since later the it would clean up without accum
+        expl_paths = self.expl_data_collector.get_epoch_paths() ## expl_paths would clean up without accum in every epoch 
         if hasattr(self.expl_env, 'get_diagnostics'): ## always False
             logger.record_dict(self.expl_env.get_diagnostics(expl_paths), prefix='expl/',) ##
         logger.record_dict(eval_util.get_generic_path_information(expl_paths), prefix="expl/",)

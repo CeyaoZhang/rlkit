@@ -40,8 +40,10 @@ class MdpPathCollector(PathCollector):
             num_steps,
             discard_incomplete_paths,
     ) -> list: 
+
         paths = []
         num_steps_collected = 0
+        
         while num_steps_collected < num_steps:
             max_path_length_this_loop = min(  # Do not go over num_steps
                 max_path_length,

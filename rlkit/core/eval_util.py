@@ -17,7 +17,7 @@ def get_generic_path_information(paths, stat_prefix='')->OrderedDict:
     statistics = OrderedDict()
     if len(paths) == 0:
         return statistics
-    rewards = np.vstack([path["rewards"] for path in paths])
+    rewards = np.vstack([path["rewards"] for path in paths]) ## stack as (-1, 1)
     statistics.update(create_stats_ordered_dict('Rewards', rewards, stat_prefix=stat_prefix))
 
     returns = [sum(path["rewards"]) for path in paths]

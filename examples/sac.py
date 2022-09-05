@@ -39,6 +39,10 @@ def experiment(variant):
     
     # print(ENVS)
     env = NormalizedBoxEnv(ENVS[variant['env_name']]()) ## ENVS[variant['env_name']]() is an object of env
+    # if "dir" in variant['env_name']:
+    #     task = {'direction':-1}
+    # env = NormalizedBoxEnv(ENVS[variant['env_name']](task=task)) ## ENVS[variant['env_name']]() is an object of env
+
     obs_dim = int(np.prod(env.observation_space.shape))
     action_dim = int(np.prod(env.action_space.shape))
     eval_env = env
@@ -109,12 +113,13 @@ def experiment(variant):
 
 import click
 @click.command()
-@click.argument('config', default=None)
+@click.argument('config', default="./configs/cheetah-dir.json")
 @click.option('--seed', type=int, default=100) 
 @click.option('--use_gpu/--use_cpu', default=True)
 @click.option('--gpu_id', default=0)
 @click.option('--uaet/--nuaet', is_flag=True, default=False) # default not use_automatic_entropy_tuning
 @click.option('--srb/--nsrb', is_flag=True, default=False) # save replay buffer
+# @click.option('--task', is_flag=True, default=False) # save replay buffer
 def main(config, seed, use_gpu, gpu_id, srb, uaet): 
 
     variant = default_config
@@ -127,11 +132,12 @@ def main(config, seed, use_gpu, gpu_id, srb, uaet):
     variant['util_params']['use_gpu'] = use_gpu
     variant['util_params']['gpu_id'] = gpu_id
     
-    variant['algo_params']['save_replay_buffer'] = srb 
+    variant['algorithm_kwargs']['save_replay_buffer'] = srb 
     variant['trainer_kwargs']['use_automatic_entropy_tuning'] = uaet
 
     set_seed(seed)
     ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=True)
+    
     setup_logger(exp_prefix=variant['env_name'], variant=variant)
 
     experiment(variant)
