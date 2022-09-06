@@ -10,7 +10,7 @@ class AntDirEnv(MultitaskAntEnv):
             task=None,
             n_tasks=2,
             fixed_tasks=None,
-            forward_backward=False,
+            forward_backward=True,
             direction_in_degrees=False,
             **kwargs
     ):
@@ -29,6 +29,7 @@ class AntDirEnv(MultitaskAntEnv):
             goal = self._goal / 180 * np.pi
         else:
             goal = self._goal
+
         direct = (np.cos(goal), np.sin(goal))
 
         self.do_simulation(action, self.frame_skip)
@@ -40,6 +41,7 @@ class AntDirEnv(MultitaskAntEnv):
         contact_cost = 0.5 * 1e-3 * np.sum(
             np.square(np.clip(self.sim.data.cfrc_ext, -1, 1)))
         survive_reward = 1.0
+
         reward = forward_reward - ctrl_cost - contact_cost + survive_reward
         state = self.state_vector()
         notdone = np.isfinite(state).all() \
@@ -61,7 +63,7 @@ class AntDirEnv(MultitaskAntEnv):
             if self.direction_in_degrees:
                 directions = np.array([0., 180])
             else:
-                directions = np.array([0., np.pi])
+                directions = np.array([0., np.pi]) ## default
         elif self.fixed_tasks:
             directions = np.array(self.fixed_tasks)
         else:

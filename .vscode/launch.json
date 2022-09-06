@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "rlkit-SAC",
+            "name": "Cheetah-dir",
             "type": "python",
             "request": "launch",
             "program": "${file}",
@@ -13,6 +13,18 @@
             "justMyCode": true,
             "args":[
                 "./configs/cheetah-dir.json"
+            ]
+        },
+        {
+            "name": "Cheetah-vel",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args":[
+                "./configs/cheetah-vel.json",
+                "--task_id", "100"
             ]
         }
     ]

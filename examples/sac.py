@@ -32,23 +32,18 @@ def experiment(variant):
     # eval_env = NormalizedBoxEnv(HalfCheetahEnv())
     # obs_dim = expl_env.observation_space.low.size
     # action_dim = eval_env.action_space.low.size
-
-    # from rlkit.envs.pearl_envs.half_cheetah_dir import HalfCheetahDirEnv
-    # expl_env = NormalizedBoxEnv(HalfCheetahDirEnv())
-    # eval_env = NormalizedBoxEnv(HalfCheetahDirEnv())
     
     # print(ENVS)
-    env = NormalizedBoxEnv(ENVS[variant['env_name']]()) ## ENVS[variant['env_name']]() is an object of env
-    # if "dir" in variant['env_name']:
-    #     task = {'direction':-1}
-    # env = NormalizedBoxEnv(ENVS[variant['env_name']](task=task)) ## ENVS[variant['env_name']]() is an object of env
+    ## to-do-list: we need to set if-else here under different env
+    env = NormalizedBoxEnv(ENVS[variant['env_name']](n_tasks=variant['env_params']["n_tasks"])) ## ENVS[variant['env_name']]() is an object of env
+    task_id = variant['task_id']
+    assert task_id < variant['env_params']["n_tasks"], "the task id should less than the num tasks in this env"
+    env.reset_task(task_id)
 
     obs_dim = int(np.prod(env.observation_space.shape))
     action_dim = int(np.prod(env.action_space.shape))
     eval_env = env
     expl_env = env
-
-    
 
     M = variant['layer_size']
     qf1 = ConcatMlp(
@@ -71,12 +66,14 @@ def experiment(variant):
         output_size=1,
         hidden_sizes=[M, M],
     )
+
     policy = TanhGaussianPolicy(
         obs_dim=obs_dim,
         action_dim=action_dim,
         hidden_sizes=[M, M],
     )
-    eval_policy = MakeDeterministic(policy)
+    eval_policy = MakeDeterministic(policy) ## which make eval performance is better than expl performance
+
     eval_path_collector = MdpPathCollector(
         eval_env,
         eval_policy,
@@ -85,10 +82,12 @@ def experiment(variant):
         expl_env,
         policy,
     )
+
     replay_buffer = EnvReplayBuffer(
         variant['replay_buffer_size'],
         expl_env,
     )
+
     trainer = SACTrainer(
         env=eval_env,
         policy=policy,
@@ -98,6 +97,7 @@ def experiment(variant):
         target_qf2=target_qf2,
         **variant['trainer_kwargs']
     )
+
     algorithm = TorchBatchRLAlgorithm(
         trainer=trainer,
         exploration_env=expl_env,
@@ -114,13 +114,13 @@ def experiment(variant):
 import click
 @click.command()
 @click.argument('config', default="./configs/cheetah-dir.json")
+@click.option('--task_id', type=int, default=0) ## you can choose the task id in each env, but we have some constrains in some env
 @click.option('--seed', type=int, default=100) 
 @click.option('--use_gpu/--use_cpu', default=True)
 @click.option('--gpu_id', default=0)
 @click.option('--uaet/--nuaet', is_flag=True, default=False) # default not use_automatic_entropy_tuning
 @click.option('--srb/--nsrb', is_flag=True, default=False) # save replay buffer
-# @click.option('--task', is_flag=True, default=False) # save replay buffer
-def main(config, seed, use_gpu, gpu_id, srb, uaet): 
+def main(config, task_id, seed, use_gpu, gpu_id, srb, uaet): 
 
     variant = default_config
     if config:
@@ -128,6 +128,7 @@ def main(config, seed, use_gpu, gpu_id, srb, uaet):
             exp_params = json.load(f)
         variant = deep_update_dict(exp_params, variant)
     
+    variant['task_id'] = task_id
     variant['util_params']['seed'] = seed
     variant['util_params']['use_gpu'] = use_gpu
     variant['util_params']['gpu_id'] = gpu_id
@@ -137,7 +138,7 @@ def main(config, seed, use_gpu, gpu_id, srb, uaet):
 
     set_seed(seed)
     ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=True)
-    
+
     setup_logger(exp_prefix=variant['env_name'], variant=variant)
 
     experiment(variant)

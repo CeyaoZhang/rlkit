@@ -211,7 +211,7 @@ def create_log_dir(
     exp_name = create_exp_name(exp_prefix, exp_id=exp_id,
                                seed=seed)
     if base_log_dir is None:
-        base_log_dir = conf.LOCAL_LOG_DIR ## data/
+        base_log_dir = conf.LOCAL_LOG_DIR ## data/ to output/
     if include_exp_prefix_sub_dir:
         log_dir = osp.join(base_log_dir, exp_prefix.replace("_", "-"), exp_name)
     else:
@@ -264,7 +264,9 @@ def setup_logger(
         git_infos = get_git_infos(conf.CODE_DIRS_TO_MOUNT)
     first_time = log_dir is None
     if first_time:
-        log_dir = create_log_dir(exp_prefix, **create_log_dir_kwargs)
+        seed = variant['util_params']['seed']
+        # log_dir = create_log_dir(exp_prefix, **create_log_dir_kwargs)
+        log_dir = create_log_dir(exp_prefix, seed=seed, **create_log_dir_kwargs)
 
     if variant is not None:
         logger.log("Variant:")
