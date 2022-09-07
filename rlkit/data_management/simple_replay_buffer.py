@@ -13,7 +13,7 @@ class SimpleReplayBuffer(ReplayBuffer):
         max_replay_buffer_size,
         observation_dim,
         action_dim,
-        env_info_sizes,
+        env_info_sizes: dict,
         replace = True,
     ):
         self._observation_dim = observation_dim

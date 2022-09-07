@@ -16,6 +16,18 @@
             ]
         },
         {
+            "name": "Cheetah-dir-srb",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args":[
+                "./configs/cheetah-dir.json",
+                "--srb"
+            ]
+        },
+        {
             "name": "Cheetah-vel",
             "type": "python",
             "request": "launch",
@@ -24,7 +36,7 @@
             "justMyCode": true,
             "args":[
                 "./configs/cheetah-vel.json",
-                "--task_id", "100"
+                "--task_id", "1"
             ]
         }
     ]

@@ -82,10 +82,11 @@ def experiment(variant):
         expl_env,
         policy,
     )
-
+    
     replay_buffer = EnvReplayBuffer(
-        variant['replay_buffer_size'],
-        expl_env,
+        max_replay_buffer_size=variant['replay_buffer_size'],
+        env=expl_env,
+        env_info_sizes=variant['env_info_sizes']
     )
 
     trainer = SACTrainer(

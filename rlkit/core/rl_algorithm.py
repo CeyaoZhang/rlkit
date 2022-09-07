@@ -9,6 +9,7 @@ from rlkit.samplers.data_collector import DataCollector, MdpPathCollector
 
 
 
+
 def _get_epoch_timings():
     times_itrs = gt.get_times().stamps.itrs
     times = OrderedDict()
@@ -81,7 +82,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         snapshot = {}
         for k, v in self.trainer.get_snapshot().items(): ## save all network
             snapshot['trainer/' + k] = v
-        for k, v in self.expl_data_collector.get_snapshot().items():
+        for k, v in self.expl_data_collector.get_snapshot().items(): ## save policy and env
             snapshot['exploration/' + k] = v
         for k, v in self.eval_data_collector.get_snapshot().items(): ## save policy and env
             snapshot['evaluation/' + k] = v

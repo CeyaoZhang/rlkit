@@ -242,7 +242,7 @@ class SACTrainer(TorchTrainer, LossFunction):
             self.policy_optimizer,
         ]
 
-    def get_snapshot(self):
+    def get_snapshot(self)->dict:
         return dict(
             policy=self.policy,
             qf1=self.qf1,

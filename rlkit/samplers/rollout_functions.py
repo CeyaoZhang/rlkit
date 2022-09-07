@@ -67,10 +67,10 @@ def contextual_rollout(
     )
     return paths
 
-
+from rlkit.torch.sac.policies import TanhGaussianPolicy
 def rollout(
         env,
-        agent,
+        agent: TanhGaussianPolicy,
         max_path_length=np.inf,
         render=False,
         render_kwargs=None,
@@ -80,12 +80,14 @@ def rollout(
         full_o_postprocess_func=None,
         reset_callback=None,
 ) -> dict:
+
     if render_kwargs is None:
         render_kwargs = {}
     if get_action_kwargs is None:
         get_action_kwargs = {}
     if preprocess_obs_for_policy_fn is None:
         preprocess_obs_for_policy_fn = lambda x: x
+
     raw_obs = []
     raw_next_obs = []
     observations = []
@@ -99,6 +101,7 @@ def rollout(
     path_length = 0
     agent.reset()
     o = env.reset()
+
     if reset_callback:
         reset_callback(env, agent, o)
     if render:
@@ -126,7 +129,7 @@ def rollout(
         actions.append(a)
         next_observations.append(next_o)
         raw_next_obs.append(next_o)
-        agent_infos.append(agent_info)
+        agent_infos.append(agent_info) ## often agent_info={}
         env_infos.append(env_info)
         path_length += 1
         if done:

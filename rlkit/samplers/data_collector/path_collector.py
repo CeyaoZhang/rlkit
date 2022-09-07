@@ -89,11 +89,11 @@ class MdpPathCollector(PathCollector):
         ))
         return stats
 
-    def get_snapshot(self):
+    def get_snapshot(self)->dict:
         snapshot_dict = dict(
             policy=self._policy,
         )
-        if self._save_env_in_snapshot:
+        if self._save_env_in_snapshot: ## always True
             snapshot_dict['env'] = self._env
         return snapshot_dict
 

@@ -177,7 +177,7 @@ def run_experiment_here(
         return experiment_function(variant)
 
 
-def create_exp_name(exp_prefix, exp_id=0, seed=0):
+def create_exp_name(exp_prefix, variant, exp_id=0):
     """
     Create a semi-unique experiment name that has a timestamp
     :param exp_prefix:
@@ -188,13 +188,21 @@ def create_exp_name(exp_prefix, exp_id=0, seed=0):
     # timestamp = now.strftime('%Y_%m_%d_%H_%M_%S')
     # return "%s_%s_%04d--s-%d" % (exp_prefix, timestamp, exp_id, seed)
     timestamp = now.strftime('%Y%m%d%H%M%S')
-    return "%s_%s_seed%d" % (exp_prefix, timestamp, seed)
+    
+    task_id = variant['task_id']
+    algorithm = variant['algorithm']
+    seed = variant['util_params']['seed']
 
+    srb = variant['algorithm_kwargs']['save_replay_buffer']
+    if srb:
+        return f"{exp_prefix}-{timestamp}-id{task_id}_{algorithm}_seed{seed}_srb" 
+    else:
+        return f"{exp_prefix}-{timestamp}-id{task_id}_{algorithm}_seed{seed}_nsrb" 
 
 def create_log_dir(
         exp_prefix,
+        variant, 
         exp_id=0,
-        seed=0,
         base_log_dir=None,
         include_exp_prefix_sub_dir=True,
 ):
@@ -208,8 +216,7 @@ def create_log_dir(
     :param base_log_dir: The directory where all log should be saved.
     :return:
     """
-    exp_name = create_exp_name(exp_prefix, exp_id=exp_id,
-                               seed=seed)
+    exp_name = create_exp_name(exp_prefix, variant=variant, exp_id=exp_id)
     if base_log_dir is None:
         base_log_dir = conf.LOCAL_LOG_DIR ## data/ to output/
     if include_exp_prefix_sub_dir:
@@ -264,9 +271,8 @@ def setup_logger(
         git_infos = get_git_infos(conf.CODE_DIRS_TO_MOUNT)
     first_time = log_dir is None
     if first_time:
-        seed = variant['util_params']['seed']
         # log_dir = create_log_dir(exp_prefix, **create_log_dir_kwargs)
-        log_dir = create_log_dir(exp_prefix, seed=seed, **create_log_dir_kwargs)
+        log_dir = create_log_dir(exp_prefix, variant=variant, **create_log_dir_kwargs)
 
     if variant is not None:
         logger.log("Variant:")
@@ -286,7 +292,7 @@ def setup_logger(
         for tabular_fd in logger._tabular_fds:
             logger._tabular_header_written.add(tabular_fd)
     logger.set_snapshot_dir(log_dir) ## self._snapshot_dir = log_dir
-    logger.set_snapshot_mode(snapshot_mode)
+    logger.set_snapshot_mode(snapshot_mode) ## snapshot_mode="last"
     logger.set_snapshot_gap(snapshot_gap)
     logger.set_log_tabular_only(log_tabular_only)
     exp_name = log_dir.split("/")[-1]

@@ -4,6 +4,7 @@ default_config = dict(
     algorithm="SAC",
     version="normal",
     layer_size=256, 
+    task_id=0,
     env_params=dict(
         n_tasks=2,
     ),
@@ -31,5 +32,6 @@ default_config = dict(
         use_gpu=True,
         gpu_id=0,
         seed=0,
-    )
+    ),
+    env_info_sizes=dict()
 )

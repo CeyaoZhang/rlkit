@@ -1,4 +1,5 @@
 import abc
+from array import array
 import logging
 
 import numpy as np
@@ -23,8 +24,8 @@ class TorchStochasticPolicy(
     DistributionGenerator,
     ExplorationPolicy, metaclass=abc.ABCMeta
 ):
-    def get_action(self, obs_np, ):
-        actions = self.get_actions(obs_np[None])
+    def get_action(self, obs_np:array, ):
+        actions = self.get_actions(obs_np[None]) ## obs_np[None] from (N,) to (1, N)
         return actions[0, :], {}
 
     def get_actions(self, obs_np, ):
