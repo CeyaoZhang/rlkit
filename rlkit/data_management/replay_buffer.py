@@ -48,7 +48,7 @@ class ReplayBuffer(object, metaclass=abc.ABCMeta):
                 reward,
                 next_obs,
                 terminal,
-                agent_info,
+                agent_info, # useless
                 env_info
         ) in enumerate(zip(
             path["observations"],
@@ -68,7 +68,7 @@ class ReplayBuffer(object, metaclass=abc.ABCMeta):
                 agent_info=agent_info,
                 env_info=env_info,
             )
-        self.terminate_episode()
+        self.terminate_episode() # pass
 
     def add_paths(self, paths):
         for path in paths:

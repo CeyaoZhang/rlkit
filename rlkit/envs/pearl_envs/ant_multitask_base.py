@@ -35,6 +35,7 @@ class MultitaskAntEnv(AntEnv):
         return range(len(self.tasks))
 
     def reset_task(self, idx):
+        self._idx = idx
         try:
             self._task = self.tasks[idx]
         except IndexError as e:

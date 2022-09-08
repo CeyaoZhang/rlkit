@@ -11,6 +11,7 @@ def mass_center(model, sim):
 class HumanoidDirEnv(HumanoidEnv):
 
     def __init__(self, task={}, n_tasks=2, randomize_tasks=True):
+        self._name = "humanoid-dir"
         self.tasks = self.sample_tasks(n_tasks)
         self.reset_task(0)
         super(HumanoidDirEnv, self).__init__()
@@ -49,6 +50,7 @@ class HumanoidDirEnv(HumanoidEnv):
         return range(len(self.tasks))
 
     def reset_task(self, idx):
+        self._idx = idx
         self._task = self.tasks[idx]
         self._goal = self._task['goal'] # assume parameterization of task by single vector
 

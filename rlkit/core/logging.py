@@ -221,6 +221,9 @@ class Logger(object):
             import cloudpickle
             full_filename = file_name + ".cpkl"
             cloudpickle.dump(data, open(full_filename, "wb"))
+        elif mode == 'npy':
+            import numpy as np
+            np.save(file_name, data)
         else:
             raise ValueError("Invalid mode: {}".format(mode))
         return file_name

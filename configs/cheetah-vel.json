@@ -10,5 +10,10 @@
     "replay_buffer_size": 1000000, 
     "algorithm_kwargs": {
         "num_epochs": 1000
+    },
+    "env_info_sizes":{
+        "forward_vel": 1,
+        "reward_ctrl": 1,
+        "xposbefore": 1
     }
 }

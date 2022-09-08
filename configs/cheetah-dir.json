@@ -1,11 +1,11 @@
 {
     "env_name": "cheetah-dir",
-    "replay_buffer_size": 3000000, 
+    "replay_buffer_size": 2502000, 
     "algorithm_kwargs": {
-        "num_epochs": 3000
+        "num_epochs": 2500
     },
     "env_info_sizes":{
-        "reward_forward": 1,
+        "forward_vel": 1,
         "reward_ctrl": 1
     }
 }

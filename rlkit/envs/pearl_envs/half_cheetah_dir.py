@@ -23,6 +23,7 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
     """
     def __init__(self, task={}, n_tasks=2, randomize_tasks=False):
         directions = [-1, 1]
+        self._name = "cheetah-dir"
         self.tasks = [{'direction': direction} for direction in directions]
         self._task = task
         self._goal_dir = task.get('direction', 1)
@@ -42,7 +43,9 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
         reward = forward_reward - ctrl_cost
         
         done = False
-        infos = dict(reward_forward=forward_reward,
+        infos = dict(forward_vel=forward_vel, 
+            xposbefore=xposbefore, xposafter=xposafter,
+            reward_forward=forward_reward,
             reward_ctrl=-ctrl_cost, task=self._task)
         return (observation, reward, done, infos)
 
@@ -55,6 +58,7 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
         return list(range(len(self.tasks)))
 
     def reset_task(self, idx):
+        self._idx = idx
         self._task = self.tasks[idx]
         self._goal_dir = self._task['direction']
         self._goal = self._goal_dir

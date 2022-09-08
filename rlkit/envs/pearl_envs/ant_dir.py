@@ -16,6 +16,7 @@ class AntDirEnv(MultitaskAntEnv):
     ):
         if task is None:
             task = {}
+        self._name = "ant-dir"
         self.fixed_tasks = fixed_tasks
         self.direction_in_degrees = direction_in_degrees
         self.quick_init(locals())

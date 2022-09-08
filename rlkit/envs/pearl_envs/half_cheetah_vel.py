@@ -22,6 +22,7 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
         (https://homes.cs.washington.edu/~todorov/papers/TodorovIROS12.pdf)
     """
     def __init__(self, task={}, presampled_tasks=None, n_tasks=2, randomize_tasks=True):
+        self._name = "cheetah-vel"
         self._task = task
         self.tasks = presampled_tasks or self.sample_tasks(n_tasks)
         self._goal_vel = self.tasks[0].get('velocity', 0.0)
@@ -61,6 +62,7 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
         return range(len(self.tasks))
 
     def reset_task(self, idx):
+        self._idx = idx
         self._task = self.tasks[idx]
         self._goal_vel = self._task['velocity']
         self._goal = self._goal_vel

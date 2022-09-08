@@ -103,3 +103,18 @@ class SimpleReplayBuffer(ReplayBuffer):
         return OrderedDict([
             ('size', self._size)
         ])
+
+    @property
+    def save(self)-> dict:
+        replay_buffer_dict = dict(
+            observations=self._observations[:self._size],
+            actions=self._actions[:self._size],
+            rewards=self._rewards[:self._size],
+            terminals=self._terminals[:self._size],
+            next_observations=self._next_obs[:self._size],
+        )
+        for key in self._env_info_keys:
+            assert key not in replay_buffer_dict.keys()
+            replay_buffer_dict[key] = self._env_infos[key][:self._size]
+
+        return replay_buffer_dict

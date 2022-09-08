@@ -5,6 +5,7 @@ import gtimer as gt
 
 from rlkit.core import logger, eval_util
 from rlkit.data_management.replay_buffer import ReplayBuffer
+from rlkit.data_management.simple_replay_buffer import SimpleReplayBuffer
 from rlkit.samplers.data_collector import DataCollector, MdpPathCollector
 
 
@@ -31,7 +32,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
             evaluation_env,
             exploration_data_collector: MdpPathCollector,
             evaluation_data_collector: MdpPathCollector,
-            replay_buffer: ReplayBuffer,
+            replay_buffer: SimpleReplayBuffer,
             save_replay_buffer=False
     ):
         self.trainer = trainer
@@ -59,12 +60,13 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         pass
 
     def _end_epoch(self, epoch):
-        if (epoch+1) % 300 == 0:
+        if (epoch+1) % 10 == 0:
             snapshot = self._get_snapshot()
             logger.save_itr_params(epoch, snapshot)
             ## save replay buffer
             if self.save_replay_buffer:
-                logger.save_extra_data(self.replay_buffer, file_name='replay_buffer.pkl', mode="pickle")
+                # logger.save_extra_data(self.replay_buffer, file_name='replay_buffer.pkl', mode="pickle")
+                logger.save_extra_data(data=self.replay_buffer.save, file_name=f'buffer_{self.expl_env._name}_id{self.expl_env._idx}.npy', mode="npy")
         gt.stamp('saving')
         self._log_stats(epoch) ##
 
