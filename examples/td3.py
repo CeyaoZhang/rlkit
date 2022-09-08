@@ -20,12 +20,29 @@ from rlkit.torch.networks import ConcatMlp, TanhMlpPolicy
 from rlkit.torch.td3.td3 import TD3Trainer
 from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
+from rlkit.envs.pearl_envs import ENVS
+import numpy as np
+
 
 def experiment(variant):
-    expl_env = NormalizedBoxEnv(HalfCheetahEnv())
-    eval_env = NormalizedBoxEnv(HalfCheetahEnv())
-    obs_dim = expl_env.observation_space.low.size
-    action_dim = expl_env.action_space.low.size
+    # expl_env = NormalizedBoxEnv(HalfCheetahEnv())
+    # eval_env = NormalizedBoxEnv(HalfCheetahEnv())
+    # obs_dim = expl_env.observation_space.low.size
+    # action_dim = expl_env.action_space.low.size
+
+    # print(ENVS)
+    env = NormalizedBoxEnv(ENVS[variant['env_name']](n_tasks=variant['env_params']["n_tasks"])) ## ENVS[variant['env_name']]() is an object of env
+    task_id = variant['task_id']
+    assert task_id < variant['env_params']["n_tasks"], "the task id should less than the num tasks in this env"
+
+    env.reset_task(task_id)
+
+    obs_dim = int(np.prod(env.observation_space.shape))
+    action_dim = int(np.prod(env.action_space.shape))
+    eval_env = env
+    expl_env = env
+
+
     qf1 = ConcatMlp(
         input_size=obs_dim + action_dim,
         output_size=1,
@@ -46,6 +63,7 @@ def experiment(variant):
         output_size=1,
         **variant['qf_kwargs']
     )
+    
     policy = TanhMlpPolicy(
         input_size=obs_dim,
         output_size=action_dim,
@@ -65,6 +83,7 @@ def experiment(variant):
         exploration_strategy=es,
         policy=policy,
     )
+
     eval_path_collector = MdpPathCollector(
         eval_env,
         policy,
@@ -73,10 +92,12 @@ def experiment(variant):
         expl_env,
         exploration_policy,
     )
+
     replay_buffer = EnvReplayBuffer(
         variant['replay_buffer_size'],
         expl_env,
     )
+
     trainer = TD3Trainer(
         policy=policy,
         qf1=qf1,
@@ -86,6 +107,7 @@ def experiment(variant):
         target_policy=target_policy,
         **variant['trainer_kwargs']
     )
+
     algorithm = TorchBatchRLAlgorithm(
         trainer=trainer,
         exploration_env=expl_env,

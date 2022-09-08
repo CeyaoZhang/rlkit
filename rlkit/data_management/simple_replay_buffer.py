@@ -64,7 +64,7 @@ class SimpleReplayBuffer(ReplayBuffer):
         self._cur_episode_start = 0
 
     def _advance(self):
-        self._top = (self._top + 1) % self._max_replay_buffer_size
+        self._top = (self._top + 1) % self._max_replay_buffer_size # will result FIFO
         if self._size < self._max_replay_buffer_size:
             self._size += 1
 

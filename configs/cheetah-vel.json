@@ -7,7 +7,7 @@
     "env_params": {
         "n_tasks": 65
     },
-    "replay_buffer_size": 1000000, 
+    "replay_buffer_size": 1002000, 
     "algorithm_kwargs": {
         "num_epochs": 1000
     },
