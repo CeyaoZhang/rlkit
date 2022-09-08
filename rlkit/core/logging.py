@@ -336,6 +336,30 @@ class Logger(object):
                 pass
             else:
                 raise NotImplementedError
+    
+    def save_itr_params_with_name(self, itr, params, name):
+        if self._snapshot_dir:
+            if self._snapshot_mode == 'all':
+                file_name = osp.join(self._snapshot_dir, name)
+                torch.save(params, file_name)
+            elif self._snapshot_mode == 'last': ## alway last
+                # override previous params
+                file_name = osp.join(self._snapshot_dir, name)
+                torch.save(params, file_name)
+            elif self._snapshot_mode == "gap":
+                if itr % self._snapshot_gap == 0:
+                    file_name = osp.join(self._snapshot_dir, name)
+                    torch.save(params, file_name)
+            elif self._snapshot_mode == "gap_and_last":
+                if itr % self._snapshot_gap == 0:
+                    file_name = osp.join(self._snapshot_dir, name)
+                    torch.save(params, file_name)
+                file_name = osp.join(self._snapshot_dir, name)
+                torch.save(params, file_name)
+            elif self._snapshot_mode == 'none':
+                pass
+            else:
+                raise NotImplementedError
 
 
 logger = Logger()

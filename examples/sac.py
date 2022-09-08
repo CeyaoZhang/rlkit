@@ -38,6 +38,7 @@ def experiment(variant):
     env = NormalizedBoxEnv(ENVS[variant['env_name']](n_tasks=variant['env_params']["n_tasks"])) ## ENVS[variant['env_name']]() is an object of env
     task_id = variant['task_id']
     assert task_id < variant['env_params']["n_tasks"], "the task id should less than the num tasks in this env"
+    
     env.reset_task(task_id)
 
     obs_dim = int(np.prod(env.observation_space.shape))
@@ -140,7 +141,7 @@ def main(config, task_id, seed, use_gpu, gpu_id, srb, uaet):
     set_seed(seed)
     ptu.set_gpu_mode(mode=use_gpu, gpu_id=gpu_id)  # optionally set the GPU (default=True)
 
-    setup_logger(exp_prefix=variant['env_name'], variant=variant)
+    setup_logger(exp_prefix=variant['env_name'], variant=variant, snapshot_mode="last")
 
     experiment(variant)
 

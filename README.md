@@ -18,6 +18,7 @@ nohup python -u examples/sac.py ./configs/cheetah-vel.json --gpu_id=1 --task_id 
 nohup python -u examples/sac.py ./configs/cheetah-vel.json --gpu_id=0 --task_id 59 --srb > cheetah-vel-id59_sac_srb.log 2>&1 &
 
 nohup python -u examples/sac.py ./configs/cheetah-dir.json --gpu_id=0 --task_id 0 --srb > cheetah-dir-id0_sac_srb.log 2>&1 &
+nohup python -u examples/sac.py ./configs/cheetah-dir.json --gpu_id=1 --task_id 1 --srb > cheetah-dir-id1_sac_srb.log 2>&1 &
 
 python examples/sac.py ./configs/cheetah-vel.json --gpu_id=0 --task_id 0 --srb
 python examples/sac.py ./configs/cheetah-vel.json --gpu_id=1 --task_id 1 --srb

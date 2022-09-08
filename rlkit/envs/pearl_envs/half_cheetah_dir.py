@@ -22,8 +22,11 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
         (https://homes.cs.washington.edu/~todorov/papers/TodorovIROS12.pdf)
     """
     def __init__(self, task={}, n_tasks=2, randomize_tasks=False):
-        directions = [-1, 1]
         self._name = "cheetah-dir"
+        self._idx = 0
+        self._inixpos = 0
+
+        directions = [-1, 1]
         self.tasks = [{'direction': direction} for direction in directions]
         self._task = task
         self._goal_dir = task.get('direction', 1)
@@ -58,8 +61,9 @@ class HalfCheetahDirEnv(HalfCheetahEnv):
         return list(range(len(self.tasks)))
 
     def reset_task(self, idx):
-        self._idx = idx
+        self._idx = idx ## same useless, can not load 
         self._task = self.tasks[idx]
         self._goal_dir = self._task['direction']
         self._goal = self._goal_dir
         self.reset()
+        self._inixpos = self.sim.data.qpos[0] ## same useless, can not load 

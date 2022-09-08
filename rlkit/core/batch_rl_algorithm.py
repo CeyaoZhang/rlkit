@@ -57,7 +57,7 @@ class BatchRLAlgorithm(BaseRLAlgorithm, metaclass=abc.ABCMeta):
             self._begin_epoch(self.epoch) ## pass
             self._train() ## key to train
             self._end_epoch(self.epoch) ## save params, replay buffers and record stats
-        print("---------------------Finish!!!----------------------------")
+        print("\n---------------------Finish!!!----------------------------")
 
     def _train(self):
 

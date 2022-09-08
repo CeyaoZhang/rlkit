@@ -47,7 +47,7 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
             reward_ctrl=-ctrl_cost,
             goal_vel=self._goal_vel,
             forward_vel=forward_vel,
-            xposbefore=xposbefore,
+            xposafter=xposafter,
         )
         return (observation, reward, done, infos)
 
@@ -67,3 +67,6 @@ class HalfCheetahVelEnv(HalfCheetahEnv):
         self._goal_vel = self._task['velocity']
         self._goal = self._goal_vel
         self.reset()
+        self._inixpos = self.sim.data.qpos[0]
+        print(f'inixpos: {self._inixpos}')
+

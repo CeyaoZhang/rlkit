@@ -16,14 +16,14 @@
             ]
         },
         {
-            "name": "Cheetah-dir-srb",
+            "name": "Cheetah-dir-test-srb",
             "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args":[
-                "./configs/cheetah-dir.json",
+                "./configs/cheetah-dir-test.json",
                 "--srb"
             ]
         },
