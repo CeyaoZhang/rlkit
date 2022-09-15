@@ -96,6 +96,7 @@ def experiment(variant):
     replay_buffer = EnvReplayBuffer(
         variant['replay_buffer_size'],
         expl_env,
+        env_info_sizes=variant['env_info_sizes'] ## this is the key to save env info
     )
 
     trainer = TD3Trainer(

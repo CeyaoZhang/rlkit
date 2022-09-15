@@ -195,9 +195,9 @@ def create_exp_name(exp_prefix, variant, exp_id=0):
 
     srb = variant['algorithm_kwargs']['save_replay_buffer']
     if srb:
-        return f"{exp_prefix}-{timestamp}_{algorithm}_id{task_id}_seed{seed}_srb" 
+        return f"{exp_prefix}_{algorithm}_id{task_id}_{timestamp}_seed{seed}_srb" 
     else:
-        return f"{exp_prefix}-{timestamp}_{algorithm}_id{task_id}_seed{seed}_nsrb" 
+        return f"{exp_prefix}_{algorithm}_id{task_id}_{timestamp}_seed{seed}_nsrb" 
 
 def create_log_dir(
         exp_prefix,
