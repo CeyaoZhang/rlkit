@@ -8,9 +8,10 @@ MANIFEST
 *.egg-info
 \.idea/
 
-data/
-output/
-
 *.csv
 *.log
 *.pkl
+
+data/
+output/
+

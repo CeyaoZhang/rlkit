@@ -45,11 +45,11 @@ nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_i
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=0 --task_id 8 --srb > cheetah-vel_td3_id8_srb.log 2>&1 &
 
 
+nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=1 --task_id 41 --srb > cheetah-vel_td3_id41_srb.log 2>&1 &
+
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=1 --task_id 42 --srb > cheetah-vel_td3_id42_srb.log 2>&1 &
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=1 --task_id 43 --srb > cheetah-vel_td3_id43_srb.log 2>&1 &
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=1 --task_id 44 --srb > cheetah-vel_td3_id44_srb.log 2>&1 &
-
-
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=0 --task_id 45 --srb > cheetah-vel_td3_id45_srb.log 2>&1 &
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=0 --task_id 46 --srb > cheetah-vel_td3_id46_srb.log 2>&1 &
 nohup python -u launch_experiment.py ./configs/cheetah-vel.json -alg=TD3 --gpu_id=1 --task_id 47 --srb > cheetah-vel_td3_id47_srb.log 2>&1 &
