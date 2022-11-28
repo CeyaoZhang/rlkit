@@ -24,7 +24,8 @@ import click
 @click.option('--gpu_id', default=0)
 # @click.option('--uaet/--nuaet', is_flag=True, default=False) # default not use_automatic_entropy_tuning
 @click.option('--srb/--nsrb', is_flag=True, default=False) # save replay buffer
-def main(config, algorithm, task_id, seed, use_gpu, gpu_id, srb): 
+@click.option('--spe', type=int, default=100) # save replay buffer per epochs, the new one will cover the previous one
+def main(config, algorithm, task_id, seed, use_gpu, gpu_id, srb, spe): 
 
     if algorithm == "SAC":
         from configs.sac_default import default_config
@@ -45,6 +46,7 @@ def main(config, algorithm, task_id, seed, use_gpu, gpu_id, srb):
     variant['util_params']['gpu_id'] = gpu_id
     
     variant['algorithm_kwargs']['save_replay_buffer'] = srb 
+    variant['algorithm_kwargs']['save_per_epoch'] = spe 
     # variant['trainer_kwargs']['use_automatic_entropy_tuning'] = uaet
 
     set_seed(seed)

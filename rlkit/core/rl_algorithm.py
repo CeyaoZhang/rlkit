@@ -33,7 +33,8 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
             exploration_data_collector: MdpPathCollector,
             evaluation_data_collector: MdpPathCollector,
             replay_buffer: SimpleReplayBuffer,
-            save_replay_buffer=False
+            save_replay_buffer=False,
+            save_per_epoch=100,
     ):
         self.trainer = trainer
         self.expl_env = exploration_env
@@ -43,6 +44,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         self.replay_buffer = replay_buffer
         self._start_epoch = 0
         self.save_replay_buffer = save_replay_buffer
+        self.save_per_epoch = save_per_epoch
 
         self.post_epoch_funcs = []
 
@@ -60,7 +62,7 @@ class BaseRLAlgorithm(object, metaclass=abc.ABCMeta):
         pass
 
     def _end_epoch(self, epoch):
-        if (epoch+1) % 500 == 0:
+        if (epoch+1) % self.save_per_epoch == 0:
             snapshot = self._get_snapshot()
             # logger.save_itr_params(epoch, snapshot)
             logger.save_itr_params_with_name(itr=epoch, params=snapshot, name=f'params_{self.expl_env._name}-id{self.expl_env._idx}.pkl')
